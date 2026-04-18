@@ -1,8 +1,6 @@
-import java.util.*;
-
 public class PriorityCalculator {
 
-    private static int learningFactor = 0; // improves over time
+    private static int learningFactor = 0;
 
     private static final String[] NEGATIVE_WORDS = {
         "angry", "worst", "bad", "terrible", "hate", "frustrated", "issue", "problem"
@@ -12,7 +10,6 @@ public class PriorityCalculator {
         "crash", "failed", "error", "not working", "down", "broken"
     };
 
-    // SENTIMENT ANALYSIS
     public static int detectSentimentScore(String desc) {
         desc = desc.toLowerCase();
         int score = 0;
@@ -24,7 +21,6 @@ public class PriorityCalculator {
         return score >= 2 ? 5 : (score == 1 ? 4 : 2);
     }
 
-    // IMPACT DETECTION
     public static int detectImpact(String desc) {
         desc = desc.toLowerCase();
         int score = 0;
@@ -36,14 +32,11 @@ public class PriorityCalculator {
         return score >= 2 ? 5 : (score == 1 ? 4 : 2);
     }
 
-    // FINAL PRIORITY (WITH LEARNING)
     public static int calculate(String desc) {
         int urgency = detectSentimentScore(desc);
         int impact = detectImpact(desc);
 
         int priority = urgency + impact + learningFactor;
-
-        // learning increases gradually
         learningFactor = Math.min(2, learningFactor + 1);
 
         return priority;

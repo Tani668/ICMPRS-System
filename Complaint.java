@@ -1,4 +1,5 @@
 public class Complaint {
+
     private int id;
     private String description;
     private int priority;
@@ -6,6 +7,7 @@ public class Complaint {
     private String department;
     private String status;
 
+    // Constructor (Abstraction + Logic integration)
     public Complaint(int id, String description) {
         this.id = id;
         this.description = description;
@@ -17,6 +19,7 @@ public class Complaint {
         this.status = "Open";
     }
 
+    // Getters (Encapsulation)
     public int getId() { return id; }
     public String getDescription() { return description; }
     public int getPriority() { return priority; }
