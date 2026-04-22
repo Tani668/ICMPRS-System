@@ -2,14 +2,13 @@ import java.sql.*;
 
 public class DBConnection {
 
+    private static final String URL = "jdbc:mysql://localhost:3306/complaintdb";
+    private static final String USER = "root";
+    private static final String PASSWORD = "Tanu1234#"; // change if needed
+
     public static Connection getConnection() {
         try {
-            String url = "jdbc:mysql://localhost:3306/complaintdb";
-            String user = "root";
-            String password = "Tanu1234#"; // change if needed
-
-            return DriverManager.getConnection(url, user, password);
-
+            return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
             System.out.println("❌ Database Connection Failed!");
             System.out.println("Reason: " + e.getMessage());

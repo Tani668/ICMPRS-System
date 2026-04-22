@@ -2,18 +2,19 @@ import java.sql.*;
 
 public class ComplaintManager {
 
-    // ADD
+    // ---------------- ADD COMPLAINT ----------------
     public void addComplaint(Complaint c) {
-        Connection con = null;
-        PreparedStatement ps = null;
 
-        try {
-            con = DBConnection.getConnection();
-            if (con == null) return;
+        String query = "INSERT INTO complaints (id, description, priority, status, high_priority_flag, created_at) VALUES (?, ?, ?, ?, ?, ?)";
 
-            String query = "INSERT INTO complaints (id, description, priority, status, high_priority_flag, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(query)) {
 
-            ps = con.prepareStatement(query);
+            if (con == null) {
+                System.out.println("⚠ Database not connected!");
+                return;
+            }
+
             ps.setInt(1, c.getId());
             ps.setString(2, c.getDescription());
             ps.setInt(3, c.getPriority());
@@ -23,116 +24,96 @@ public class ComplaintManager {
 
             ps.executeUpdate();
 
-            System.out.println("✅ Complaint Added!");
-            System.out.println("Priority: " + c.getPriorityLevel());
-            System.out.println("Department: " + c.getDepartment());
+            System.out.println("✅ Complaint Added Successfully!");
+            System.out.println("➡ Priority: " + c.getPriority() + " (" + c.getPriorityLevel() + ")");
+            System.out.println("➡ Routed to: " + c.getDepartment());
 
         } catch (SQLIntegrityConstraintViolationException e) {
-            System.out.println("⚠ ID already exists!");
-
+            System.out.println("⚠ Complaint ID already exists!");
         } catch (SQLException e) {
-            System.out.println("❌ DB Error: " + e.getMessage());
-
-        } finally {
-            try {
-                if (ps != null) ps.close();
-                if (con != null) con.close();
-            } catch (SQLException e) {
-                System.out.println("⚠ Error closing DB");
-            }
+            System.out.println("❌ Database Error: " + e.getMessage());
         }
     }
 
-    // VIEW
+    // ---------------- VIEW ALL ----------------
     public void viewComplaints() {
-        Connection con = null;
-        Statement st = null;
-        ResultSet rs = null;
 
-        try {
-            con = DBConnection.getConnection();
-            if (con == null) return;
+        String query = "SELECT * FROM complaints ORDER BY priority DESC";
 
-            String query = "SELECT * FROM complaints ORDER BY priority DESC";
-            st = con.createStatement();
-            rs = st.executeQuery(query);
+        try (Connection con = DBConnection.getConnection();
+             Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(query)) {
+
+            if (con == null) {
+                System.out.println("⚠ Database not connected!");
+                return;
+            }
 
             boolean found = false;
 
             while (rs.next()) {
                 found = true;
 
-                System.out.println("\n----------------------");
+                System.out.println("\n------------------------------");
                 System.out.println("ID: " + rs.getInt("id"));
                 System.out.println("Description: " + rs.getString("description"));
                 System.out.println("Priority: " + rs.getInt("priority"));
                 System.out.println("Status: " + rs.getString("status"));
+                System.out.println("High Priority Flag: " + rs.getInt("high_priority_flag"));
                 System.out.println("Time: " + rs.getTimestamp("created_at"));
             }
 
-            if (!found)
-                System.out.println("⚠ No complaints found");
+            if (!found) {
+                System.out.println("⚠ No complaints found.");
+            }
 
         } catch (SQLException e) {
-            System.out.println("❌ DB Error: " + e.getMessage());
-
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (st != null) st.close();
-                if (con != null) con.close();
-            } catch (SQLException e) {}
+            System.out.println("❌ Database Error: " + e.getMessage());
         }
     }
 
-    // SEARCH
+    // ---------------- SEARCH ----------------
     public void searchComplaint(int id) {
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
 
-        try {
-            con = DBConnection.getConnection();
-            if (con == null) return;
+        String query = "SELECT * FROM complaints WHERE id=?";
 
-            String query = "SELECT * FROM complaints WHERE id=?";
-            ps = con.prepareStatement(query);
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(query)) {
+
+            if (con == null) {
+                System.out.println("⚠ Database not connected!");
+                return;
+            }
+
             ps.setInt(1, id);
-
-            rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                System.out.println("Found:");
+                System.out.println("\n🔍 Complaint Found:");
                 System.out.println("Description: " + rs.getString("description"));
                 System.out.println("Priority: " + rs.getInt("priority"));
                 System.out.println("Status: " + rs.getString("status"));
             } else {
-                System.out.println("❌ Not found");
+                System.out.println("❌ Complaint not found!");
             }
 
         } catch (SQLException e) {
-            System.out.println("❌ DB Error: " + e.getMessage());
-
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
-                if (con != null) con.close();
-            } catch (SQLException e) {}
+            System.out.println("❌ Database Error: " + e.getMessage());
         }
     }
 
-    // UPDATE
+    // ---------------- UPDATE ----------------
     public void updateStatus(int id, String status) {
-        Connection con = null;
-        PreparedStatement ps = null;
 
-        try {
-            con = DBConnection.getConnection();
-            if (con == null) return;
+        String query = "UPDATE complaints SET status=? WHERE id=?";
 
-            String query = "UPDATE complaints SET status=? WHERE id=?";
-            ps = con.prepareStatement(query);
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(query)) {
+
+            if (con == null) {
+                System.out.println("⚠ Database not connected!");
+                return;
+            }
 
             ps.setString(1, status);
             ps.setInt(2, id);
@@ -140,49 +121,39 @@ public class ComplaintManager {
             int rows = ps.executeUpdate();
 
             if (rows > 0)
-                System.out.println("✅ Updated");
+                System.out.println("✅ Status Updated Successfully!");
             else
-                System.out.println("❌ Not found");
+                System.out.println("❌ Complaint not found!");
 
         } catch (SQLException e) {
-            System.out.println("❌ DB Error");
-
-        } finally {
-            try {
-                if (ps != null) ps.close();
-                if (con != null) con.close();
-            } catch (SQLException e) {}
+            System.out.println("❌ Database Error: " + e.getMessage());
         }
     }
 
-    // DELETE
+    // ---------------- DELETE ----------------
     public void deleteComplaint(int id) {
-        Connection con = null;
-        PreparedStatement ps = null;
 
-        try {
-            con = DBConnection.getConnection();
-            if (con == null) return;
+        String query = "DELETE FROM complaints WHERE id=?";
 
-            String query = "DELETE FROM complaints WHERE id=?";
-            ps = con.prepareStatement(query);
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(query)) {
+
+            if (con == null) {
+                System.out.println("⚠ Database not connected!");
+                return;
+            }
+
             ps.setInt(1, id);
 
             int rows = ps.executeUpdate();
 
             if (rows > 0)
-                System.out.println("🗑 Deleted");
+                System.out.println("🗑 Complaint Deleted Successfully!");
             else
-                System.out.println("❌ Not found");
+                System.out.println("❌ Complaint not found!");
 
         } catch (SQLException e) {
-            System.out.println("❌ DB Error");
-
-        } finally {
-            try {
-                if (ps != null) ps.close();
-                if (con != null) con.close();
-            } catch (SQLException e) {}
+            System.out.println("❌ Database Error: " + e.getMessage());
         }
     }
 }

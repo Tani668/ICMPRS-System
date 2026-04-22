@@ -1,9 +1,10 @@
 *.class
-*.jar
 *.log
+*.jar
+bin/
+build/
+out/
 .idea/
 .vscode/
-*.class
-*.log
-*.jar
+*.iml
 

@@ -1,7 +1,6 @@
 import java.util.*;
 
 public class Main {
-
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
@@ -9,37 +8,42 @@ public class Main {
 
         while (true) {
             try {
-                System.out.println("\n==== Complaint System ====");
-                System.out.println("1. Add");
-                System.out.println("2. View");
-                System.out.println("3. Search");
-                System.out.println("4. Update");
-                System.out.println("5. Delete");
+                System.out.println("\n==== ICMPRS System ====");
+                System.out.println("1. Add Complaint");
+                System.out.println("2. View All");
+                System.out.println("3. Search by ID");
+                System.out.println("4. Update Status");
+                System.out.println("5. Delete Complaint");
                 System.out.println("6. Exit");
 
-                System.out.print("Choice: ");
+                System.out.print("Enter choice: ");
 
                 if (!sc.hasNextInt()) {
-                    System.out.println("⚠ Invalid input");
+                    System.out.println("⚠ Invalid input! Enter a number.");
                     sc.nextLine();
                     continue;
                 }
 
-                int ch = sc.nextInt();
+                int choice = sc.nextInt();
                 sc.nextLine();
 
-                switch (ch) {
+                switch (choice) {
 
                     case 1:
                         System.out.print("ID: ");
+                        if (!sc.hasNextInt()) {
+                            System.out.println("⚠ Invalid ID!");
+                            sc.nextLine();
+                            break;
+                        }
                         int id = sc.nextInt();
                         sc.nextLine();
 
                         System.out.print("Description: ");
                         String desc = sc.nextLine();
 
-                        if (desc.isEmpty()) {
-                            System.out.println("⚠ Empty description");
+                        if (desc.trim().isEmpty()) {
+                            System.out.println("⚠ Description cannot be empty!");
                             break;
                         }
 
@@ -51,37 +55,57 @@ public class Main {
                         break;
 
                     case 3:
-                        System.out.print("ID: ");
+                        System.out.print("Enter ID: ");
+                        if (!sc.hasNextInt()) {
+                            System.out.println("⚠ Invalid ID!");
+                            sc.nextLine();
+                            break;
+                        }
                         cm.searchComplaint(sc.nextInt());
                         break;
 
                     case 4:
                         System.out.print("ID: ");
+                        if (!sc.hasNextInt()) {
+                            System.out.println("⚠ Invalid ID!");
+                            sc.nextLine();
+                            break;
+                        }
                         int uid = sc.nextInt();
                         sc.nextLine();
 
-                        System.out.print("Status: ");
+                        System.out.print("New Status: ");
                         String status = sc.nextLine();
+
+                        if (status.trim().isEmpty()) {
+                            System.out.println("⚠ Status cannot be empty!");
+                            break;
+                        }
 
                         cm.updateStatus(uid, status);
                         break;
 
                     case 5:
                         System.out.print("ID: ");
+                        if (!sc.hasNextInt()) {
+                            System.out.println("⚠ Invalid ID!");
+                            sc.nextLine();
+                            break;
+                        }
                         cm.deleteComplaint(sc.nextInt());
                         break;
 
                     case 6:
-                        System.out.println("Bye!");
+                        System.out.println("Exiting...");
                         sc.close();
                         System.exit(0);
 
                     default:
-                        System.out.println("Invalid choice");
+                        System.out.println("⚠ Invalid choice!");
                 }
 
             } catch (Exception e) {
-                System.out.println("❌ Error: " + e.getMessage());
+                System.out.println("❌ Unexpected Error: " + e.getMessage());
                 sc.nextLine();
             }
         }
