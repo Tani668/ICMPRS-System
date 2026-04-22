@@ -48,3 +48,7 @@ public class PriorityCalculator {
         else return "LOW";
     }
 }
+// METHOD OVERLOADING
+public static int calculate(String desc, int extraWeight) {
+    return calculate(desc) + extraWeight;
+}

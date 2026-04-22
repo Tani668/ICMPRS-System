@@ -1,16 +1,12 @@
-public class Complaint {
+public class Complaint extends BaseComplaint {
 
-    private int id;
-    private String description;
     private int priority;
     private String priorityLevel;
     private String department;
     private String status;
 
-    // Constructor (Abstraction + Logic integration)
     public Complaint(int id, String description) {
-        this.id = id;
-        this.description = description;
+        super(id, description); // inheritance
 
         this.priority = PriorityCalculator.calculate(description);
         this.priorityLevel = PriorityCalculator.getPriorityLevel(priority);
@@ -19,7 +15,17 @@ public class Complaint {
         this.status = "Open";
     }
 
-    // Getters (Encapsulation)
+    // METHOD OVERRIDING (Polymorphism)
+    @Override
+    public void displayBasicInfo() {
+        super.displayBasicInfo();
+        System.out.println("Priority: " + priority);
+        System.out.println("Level: " + priorityLevel);
+        System.out.println("Department: " + department);
+        System.out.println("Status: " + status);
+    }
+
+    // Getters
     public int getId() { return id; }
     public String getDescription() { return description; }
     public int getPriority() { return priority; }
